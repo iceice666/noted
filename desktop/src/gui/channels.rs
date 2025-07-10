@@ -1,27 +1,32 @@
-use iced::widget::{column, container, text};
-use iced::{Element, Length, Task};
+use iced::widget::scrollable::{Direction, Scrollbar};
+use iced::widget::{Scrollable, column, text};
+use iced::{Element, Task};
 
-use crate::gui::AppState;
 use crate::preview;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub enum Message {}
 
-pub fn update(state: &mut AppState, message: Message) -> Task<Message> {
+#[derive(Debug, Clone)]
+pub struct State {}
+
+impl Default for State {
+    fn default() -> Self {
+        Self {}
+    }
+}
+
+pub fn update(state: &mut State, message: Message) -> Task<Message> {
     match message {}
 }
 
-pub fn view(state: &AppState) -> Element<Message> {
-    column![
-        text("This").size(24),
-        text("is").size(24),
-        text("a").size(24),
-        text("sidebar").size(24),
-    ]
-    
-    .into()
+pub fn view(state: &State) -> Element<Message> {
+    let lots_of_texts =
+        column((0..20).map(|i| text(format!("{} vertical scrollable  ", i + 1)).into()));
+
+    Scrollable::new(lots_of_texts)
+        .direction(Direction::Vertical(Scrollbar::new()))
+        .into()
 }
-
-
 
 preview!();

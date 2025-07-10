@@ -15,5 +15,5 @@ pub struct ChannelGroup {
     pub channels: Vec<Channel>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Channels(Vec<ChannelGroup>);
+
+pub type Channels = Vec<ChannelGroup>;

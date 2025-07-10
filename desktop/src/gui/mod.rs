@@ -1,34 +1,39 @@
-use iced::Task;
+// Template for the new component
+/*
+use iced::{Element, Task};
 
-use crate::{
-    config::{self, AppConfig},
-    schema::Database,
-};
+use crate::gui::AppState;
+
+#[derive(Debug, Clone)]
+pub enum Message {}
+
+#[derive(Debug, Clone)]
+pub struct State {}
+
+impl Default for State {
+    fn default() -> Self {
+        Self {}
+    }
+}
+
+pub fn update(state: &mut State, message: Message) -> Task<Message> {
+    match message {}
+}
+
+pub fn view(state: &State) -> Element<Message> {
+    unimplemented!()
+}
+*/
 
 mod channels;
 mod content;
 mod root;
 
+pub use root::State as AppState;
 pub use root::{update, view};
 
-pub struct AppState {
-    config: AppConfig,
-    database: Database,
-}
-
-impl AppState {
-    pub fn new<T>() -> (Self, Task<T>) {
-        let config = config::load_config();
-        let database = Database::new(&config);
-
-        let app = Self { config, database };
-
-        (app, Task::none())
-    }
-}
-
 pub fn run() -> iced::Result {
-    iced::application("Noted Desktop", root::update, root::view).run_with(AppState::new)
+    iced::application("Noted Desktop", root::update, root::view).run()
 }
 
 //
@@ -59,28 +64,27 @@ pub fn run_preview(target: &str) -> anyhow::Result<()> {
 
 #[macro_export]
 macro_rules! preview {
-    () => {
+    (state) => {
         preview!(state = AppState);
     };
 
-    (state) => {
+    () => {
         preview!(state = State);
     };
 
     (state = $state:ident) => {
-        type __State = $state;
-
         struct __Title;
-        impl iced::application::Title<__State> for __Title {
-            fn title(&self, _state: &__State) -> String {
+        impl iced::application::Title<$state> for __Title {
+            fn title(&self, _state: &$state) -> String {
                 format!("Previewing {}", module_path!())
             }
         }
 
         #[cfg(feature = "preview")]
         fn __run() -> iced::Result {
-            iced::application(__Title, update, view).run_with(__State::new)
+            iced::application(__Title, update, view).run()
         }
+
         #[cfg(feature = "preview")]
         #[linkme::distributed_slice($crate::gui::PREVIEW_TARGETS)]
         static __CONFIG: (&str, fn() -> iced::Result) = (module_path!(), __run);

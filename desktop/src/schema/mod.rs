@@ -1,8 +1,12 @@
-pub mod channels;
+mod channels;
+mod notes;
 
 use crate::config::AppConfig;
 use polodb_core::{Collection, Database as PoloDatabase};
 use std::path::PathBuf;
+
+pub use channels::*;
+pub use notes::*;
 
 pub struct Database {
     db: PoloDatabase,
