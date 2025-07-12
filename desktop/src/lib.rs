@@ -2,6 +2,7 @@ pub mod config;
 pub mod gui;
 pub mod schema;
 
+pub use gui::Component;
 use tracing_subscriber::filter::EnvFilter;
 
 pub fn setup_logger() {

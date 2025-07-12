@@ -1,26 +1,28 @@
 use iced::widget::{column, text};
 use iced::{Element, Task};
 
+use crate::gui::{Component, Preview};
+
 #[derive(Debug, Clone)]
 pub enum Message {}
 
-#[derive(Debug, Clone)]
-pub struct State {}
+#[Preview]
+#[derive(Debug, Default, Clone)]
+pub struct ContentView {}
 
-impl Default for State {
-    fn default() -> Self {
-        Self {}
+impl Component for ContentView {
+    type Message = Message;
+
+    fn update(&mut self, message: Self::Message) -> Task<Self::Message> {
+        match message {}
+    }
+
+    fn view(&self) -> Element<Self::Message> {
+        column![
+            text("Content Area").size(24),
+            text("This is where the content will be displayed."),
+        ]
+        .into()
     }
 }
 
-pub fn update(state: &mut State, message: Message) -> Task<Message> {
-    match message {}
-}
-
-pub fn view(state: &State) -> Element<Message> {
-    column![
-        text("Content Area").size(24),
-        text("This is where the content will be displayed."),
-    ]
-    .into()
-}

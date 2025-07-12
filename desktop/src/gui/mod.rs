@@ -1,40 +1,9 @@
-// Template for the new component
-/*
-use iced::{Element, Task};
-
-use crate::gui::AppState;
-
-#[derive(Debug, Clone)]
-pub enum Message {}
-
-#[derive(Debug, Clone)]
-pub struct State {}
-
-impl Default for State {
-    fn default() -> Self {
-        Self {}
-    }
-}
-
-pub fn update(state: &mut State, message: Message) -> Task<Message> {
-    match message {}
-}
-
-pub fn view(state: &State) -> Element<Message> {
-    unimplemented!()
-}
-*/
-
 mod channels;
 mod content;
 mod root;
 
-pub use root::State as AppState;
-pub use root::{update, view};
-
-pub fn run() -> iced::Result {
-    iced::application("Noted Desktop", root::update, root::view).run()
-}
+pub use noted_desktop_macros::Preview;
+pub use root::RootView;
 
 //
 // Preview feature for running specific targets
@@ -62,37 +31,17 @@ pub fn run_preview(target: &str) -> anyhow::Result<()> {
     }
 }
 
-#[macro_export]
-macro_rules! preview {
-    (state) => {
-        preview!(state = AppState);
-    };
+pub trait Component {
+    type Message;
 
-    () => {
-        preview!(state = State);
-    };
-
-    (state = $state:ident) => {
-        struct __Title;
-        impl iced::application::Title<$state> for __Title {
-            fn title(&self, _state: &$state) -> String {
-                format!("Previewing {}", module_path!())
-            }
-        }
-
-        #[cfg(feature = "preview")]
-        fn __run() -> iced::Result {
-            iced::application(__Title, update, view).run()
-        }
-
-        #[cfg(feature = "preview")]
-        #[linkme::distributed_slice($crate::gui::PREVIEW_TARGETS)]
-        static __CONFIG: (&str, fn() -> iced::Result) = (module_path!(), __run);
-
-        #[cfg(feature = "preview")]
-        #[test]
-        fn preview() -> anyhow::Result<()> {
-            $crate::gui::run_preview(module_path!())
-        }
-    };
+    fn update(&mut self, message: Self::Message) -> iced::Task<Self::Message>;
+    fn view(&self) -> iced::Element<Self::Message>;
+    fn preview() -> (Self, iced::Task<Self::Message>)
+    where
+        Self: Sized,
+    {
+        unimplemented!(
+            "You have to implement `Component::preview` for your component so that it can be previewed."
+        );
+    }
 }

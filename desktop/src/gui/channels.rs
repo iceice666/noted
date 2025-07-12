@@ -2,31 +2,30 @@ use iced::widget::scrollable::{Direction, Scrollbar};
 use iced::widget::{Scrollable, column, text};
 use iced::{Element, Task};
 
-use crate::preview;
+use crate::gui::{Component, Preview};
+use crate::schema::Channels;
 
 #[derive(Debug, Clone)]
 pub enum Message {}
 
-#[derive(Debug, Clone)]
-pub struct State {}
+#[Preview]
+#[derive(Debug, Default, Clone)]
+pub struct ChannelsView {
+    pub channels: Channels,
+}
 
-impl Default for State {
-    fn default() -> Self {
-        Self {}
+impl Component for ChannelsView {
+    type Message = Message;
+
+    fn update(&mut self, message: Self::Message) -> Task<Self::Message> {
+        match message {}
+    }
+
+    fn view(&self) -> Element<Self::Message> {
+        let chs = column((0..20).map(|i| text(format!("{} vertical scrollable  ", i + 1)).into()));
+
+        Scrollable::new(chs)
+            .direction(Direction::Vertical(Scrollbar::new()))
+            .into()
     }
 }
-
-pub fn update(state: &mut State, message: Message) -> Task<Message> {
-    match message {}
-}
-
-pub fn view(state: &State) -> Element<Message> {
-    let lots_of_texts =
-        column((0..20).map(|i| text(format!("{} vertical scrollable  ", i + 1)).into()));
-
-    Scrollable::new(lots_of_texts)
-        .direction(Direction::Vertical(Scrollbar::new()))
-        .into()
-}
-
-preview!();

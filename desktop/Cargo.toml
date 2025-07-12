@@ -17,12 +17,16 @@ chrono = { version = "0.4", features = ["serde"] }
 serde = { version = "1.0.219", features = ["derive"] }
 tracing = "0.1.41"
 tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
-linkme = { version = "0.3", optional = true }
 indexmap = { version = "2.0", features = ["serde"] }
+noted_desktop_macros = { path = "macros" }
+
+# Preview specific
+linkme = { version = "0.3", optional = true }
+inquire = { version = "0.7.5", optional = true }
 
 [features]
 default = []
-preview = ["linkme"]
+preview = ["linkme", "inquire"]
 
 [[bin]]
 name = "preview"

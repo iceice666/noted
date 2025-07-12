@@ -1,0 +1,10 @@
+
+[private]
+choose:
+    just --choose
+
+preview:
+    cargo run --features preview --bin preview
+
+run:
+    cargo run

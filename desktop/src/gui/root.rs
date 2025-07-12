@@ -3,35 +3,13 @@ use iced::{
     widget::{row, vertical_rule},
     window,
 };
+use noted_desktop_macros::Preview;
 
 use crate::{
-    config,
-    gui::{channels, content},
-    preview,
+    config::AppConfig,
+    gui::{Component, channels, content},
     schema::Database,
 };
-
-pub struct State {
-    config: config::AppConfig,
-    database: Database,
-    // Components state
-    channels: channels::State,
-    content: content::State,
-}
-
-impl Default for State {
-    fn default() -> Self {
-        let config = config::load_config();
-        let database = Database::new(&config);
-
-        Self {
-            config,
-            database,
-            channels: Default::default(),
-            content: Default::default(),
-        }
-    }
-}
 
 #[derive(Debug, Clone)]
 pub enum Message {
@@ -40,25 +18,40 @@ pub enum Message {
     Content(super::content::Message),
 }
 
-pub fn update(state: &mut State, message: Message) -> Task<Message> {
-    match message {
-        Message::Exit => window::get_latest().and_then(window::close),
-        Message::Channels(message) => {
-            channels::update(&mut state.channels, message).map(Message::Channels)
+
+#[Preview]
+#[derive(Debug, Default, Clone)]
+pub struct RootView {
+    pub channels: channels::ChannelsView,
+    pub content: content::ContentView,
+}
+
+impl RootView {
+    pub fn new(_config: AppConfig, _database: Database) -> Self {
+        Self {
+            channels: channels::ChannelsView::default(),
+            content: content::ContentView::default(),
         }
     }
 }
 
-pub fn view(state: &State) -> Element<Message> {
-    let State {
-        channels, content, ..
-    } = state;
-    row![
-        channels::view(channels).map(Message::Channels),
-        vertical_rule(0),
-        content::view(content).map(Message::Content),
-    ]
-    .into()
-}
+impl Component for RootView {
+    type Message = Message;
 
-preview!();
+    fn update(&mut self, message: Self::Message) -> Task<Self::Message> {
+        match message {
+            Message::Exit => window::get_latest().and_then(window::close),
+            Message::Channels(msg) => self.channels.update(msg).map(Message::Channels),
+            Message::Content(msg) => self.content.update(msg).map(Message::Content),
+        }
+    }
+
+    fn view(&self) -> Element<Self::Message> {
+        row![
+            self.channels.view().map(Message::Channels),
+            vertical_rule(0),
+            self.content.view().map(Message::Content),
+        ]
+        .into()
+    }
+}
